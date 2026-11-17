@@ -1,0 +1,8 @@
+# /etc/cloudflared/config.yml
+tunnel: <ID_DU_TUNNEL>
+credentials-file: /etc/cloudflared/<ID_DU_TUNNEL>.json
+
+ingress:
+  - hostname: blindtest.example.com
+    service: http://localhost:80      # nginx
+  - service: http_status:404

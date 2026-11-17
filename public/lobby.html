@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Salles publiques - Blindtest</title>
+  <meta name="theme-color" content="#0d0e14">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body data-page="lobby">
+  <header class="topbar" id="topbar"></header>
+  <main>
+    <div class="row" style="margin-bottom:1rem">
+      <h1 class="grow" style="margin:0">Salles publiques</h1>
+      <a class="btn primary" href="/#create-form">Créer une salle</a>
+    </div>
+    <div class="card">
+      <form id="join-form" class="row" style="margin-bottom:1rem">
+        <input type="text" id="code" class="code-input grow" maxlength="5" placeholder="CODE" autocomplete="off" style="max-width:220px">
+        <button class="btn" type="submit">Rejoindre par code</button>
+        <span class="muted small" id="live">Mise à jour en direct</span>
+      </form>
+      <div class="rooms" id="rooms"><div class="empty">Chargement...</div></div>
+    </div>
+  </main>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/common.js"></script>
+  <script src="/js/lobby.js"></script>
+</body>
+</html>

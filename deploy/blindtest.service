@@ -1,0 +1,26 @@
+# /etc/systemd/system/blindtest.service
+# sudo systemctl daemon-reload && sudo systemctl enable --now blindtest
+[Unit]
+Description=Blindtest multijoueur (Node.js)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=blindtest
+Group=blindtest
+WorkingDirectory=/opt/blindtest
+EnvironmentFile=/opt/blindtest/.env
+Environment=NODE_ENV=production
+ExecStart=/usr/bin/node server/index.js
+Restart=on-failure
+RestartSec=3
+# Durcissement
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/blindtest/data
+
+[Install]
+WantedBy=multi-user.target

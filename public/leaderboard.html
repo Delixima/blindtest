@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Classement - Blindtest</title>
+  <meta name="theme-color" content="#0d0e14">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body data-page="leaderboard">
+  <header class="topbar" id="topbar"></header>
+  <main>
+    <h1 style="margin-top:0">Classement global</h1>
+    <div class="card">
+      <div class="seg tabs" id="period" style="max-width:380px">
+        <button type="button" data-v="week">Semaine</button>
+        <button type="button" data-v="month">Mois</button>
+        <button type="button" data-v="all" class="on">Toujours</button>
+      </div>
+      <div class="table-wrap">
+        <table class="tbl">
+          <thead><tr><th>#</th><th>Joueur</th><th class="num">Points</th><th class="num">Parties</th><th class="num">Victoires</th><th class="num hide-mobile">Meilleur score</th></tr></thead>
+          <tbody id="lb"></tbody>
+        </table>
+      </div>
+      <p class="muted small" style="margin-top:1rem">Seuls les comptes inscrits apparaissent dans le classement global.</p>
+    </div>
+  </main>
+  <script src="/js/common.js"></script>
+  <script>
+  (async () => {
+    const { $, $$, esc, api } = BT;
+    await BT.init();
+    async function load(period) {
+      $$('#period button').forEach((b) => b.classList.toggle('on', b.dataset.v === period));
+      const tb = $('#lb');
+      tb.innerHTML = '<tr><td colspan="6" class="empty">Chargement...</td></tr>';
+      try {
+        const { entries } = await api('/api/leaderboard?period=' + period);
+        if (!entries.length) { tb.innerHTML = '<tr><td colspan="6" class="empty">Aucune partie sur cette période.</td></tr>'; return; }
+        tb.innerHTML = entries.map((e, i) => `<tr${BT.me.user?.id === e.userId ? ' style="background:rgba(139,92,246,.08)"' : ''}>
+          <td class="rank-${i + 1}">${i + 1}</td>
+          <td><a href="/profile?id=${e.userId}">${esc(e.pseudo)}</a></td>
+          <td class="num"><b>${e.totalPoints.toLocaleString('fr-FR')}</b></td>
+          <td class="num">${e.gamesPlayed}</td>
+          <td class="num">${e.wins}</td>
+          <td class="num hide-mobile">${e.bestScore.toLocaleString('fr-FR')}</td></tr>`).join('');
+      } catch (err) { tb.innerHTML = `<tr><td colspan="6" class="empty">${esc(err.message)}</td></tr>`; }
+    }
+    $$('#period button').forEach((b) => b.addEventListener('click', () => load(b.dataset.v)));
+    load('all');
+  })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Blindtest - devine la musique entre amis</title>
+  <meta name="theme-color" content="#0d0e14">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body data-page="home">
+  <header class="topbar" id="topbar"></header>
+  <main>
+    <section class="hero">
+      <h1>Devine le morceau<br><span>avant les autres.</span></h1>
+      <p>Blindtest multijoueur en temps réel. Crée une salle, partage le code, et que le meilleur gagne.</p>
+    </section>
+
+    <section class="home-grid">
+      <div class="card stack">
+        <h2>Ton pseudo</h2>
+        <div class="field">
+          <label for="pseudo">Pseudo (2 à 20 caractères)</label>
+          <input type="text" id="pseudo" maxlength="20" autocomplete="nickname" placeholder="Ex : DJ Patate">
+        </div>
+        <p class="small muted" id="pseudo-hint">Tu joues en invité. Crée un compte pour garder tes stats.</p>
+      </div>
+
+      <div class="card stack">
+        <h2>Rejoindre</h2>
+        <form id="join-form" class="stack">
+          <div class="field">
+            <label for="code">Code de la salle</label>
+            <input type="text" id="code" class="code-input" maxlength="5" autocomplete="off" placeholder="ABCDE">
+          </div>
+          <button class="btn primary block" type="submit">Rejoindre</button>
+        </form>
+        <a class="btn ghost block" href="/lobby">Voir les salles publiques</a>
+      </div>
+
+      <div class="card stack">
+        <h2>Créer une salle</h2>
+        <form id="create-form" class="stack">
+          <div class="field">
+            <label for="room-name">Nom de la salle</label>
+            <input type="text" id="room-name" maxlength="40" placeholder="Soirée blindtest">
+          </div>
+          <div class="grid-2">
+            <div class="field">
+              <label>Visibilité</label>
+              <div class="seg" id="visibility">
+                <button type="button" class="on" data-v="public">Publique</button>
+                <button type="button" data-v="private">Privée</button>
+              </div>
+            </div>
+            <div class="field">
+              <label for="max-players">Joueurs max : <b id="max-label">8</b></label>
+              <input type="range" id="max-players" min="2" max="20" value="8">
+            </div>
+          </div>
+          <button class="btn primary block" type="submit">Créer</button>
+        </form>
+      </div>
+    </section>
+
+    <section class="home-grid" id="compte">
+      <div class="card" id="account-card"></div>
+    </section>
+  </main>
+
+  <script src="/js/common.js"></script>
+  <script src="/js/home.js"></script>
+</body>
+</html>

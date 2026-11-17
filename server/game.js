@@ -1,7 +1,7 @@
 'use strict';
 const crypto = require('crypto');
 const config = require('./config');
-const { checkAnswer } = require('./validate');
+const { checkAnswer, cleanTitle, cleanArtist } = require('./validate');
 
 const G = config.game;
 const P = config.points;
@@ -198,6 +198,16 @@ class Room {
       throw new GameError(`Impossible de charger la source : ${e.message}`);
     }
     if (this.closed) return;
+    // Un seul exemplaire par morceau (évite 3 remixes du même titre dans une partie)
+    if (candidates) {
+      const seen = new Set();
+      candidates = shuffle(candidates).filter((t) => {
+        const key = cleanTitle(t.titleShort || t.title) + '|' + cleanArtist(t.artist);
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+    }
     if (!candidates || candidates.length === 0) {
       this.status = 'waiting';
       throw new GameError('Aucun morceau jouable pour cette source');

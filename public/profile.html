@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Profil - Blindtest</title>
+  <meta name="theme-color" content="#0d0e14">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body data-page="profile">
+  <header class="topbar" id="topbar"></header>
+  <main id="content">
+    <div class="empty">Chargement...</div>
+  </main>
+  <script src="/js/common.js"></script>
+  <script>
+  (async () => {
+    const { $, esc, api } = BT;
+    await BT.init();
+    const id = new URLSearchParams(location.search).get('id');
+    const box = $('#content');
+    let data;
+    try {
+      data = await api(id ? '/api/profile/' + encodeURIComponent(id) : '/api/profile/me');
+    } catch (err) {
+      box.innerHTML = `<div class="card center stack"><h2>${esc(err.message)}</h2><a class="btn primary" href="/#compte">Se connecter ou créer un compte</a></div>`;
+      return;
+    }
+    const { user, stats, history } = data;
+    document.title = `${user.pseudo} - Blindtest`;
+    const winRate = stats.gamesPlayed ? Math.round((stats.wins / stats.gamesPlayed) * 100) : 0;
+    box.innerHTML = `
+      <div class="row" style="margin-bottom:1rem">
+        ${BT.avatar(user.pseudo).replace('class="avatar"', 'class="avatar" style="width:56px;height:56px;font-size:1.5rem;background:' + BT.colorFor(user.pseudo) + '"')}
+        <div><h1 style="margin:0">${esc(user.pseudo)}</h1><div class="muted small">Membre depuis le ${new Date(user.created_at).toLocaleDateString('fr-FR')}</div></div>
+      </div>
+      <div class="stats-row">
+        <div class="stat"><div class="v">${stats.totalPoints.toLocaleString('fr-FR')}</div><div class="k">Points au total</div></div>
+        <div class="stat"><div class="v">${stats.gamesPlayed}</div><div class="k">Parties jouées</div></div>
+        <div class="stat"><div class="v">${stats.wins}</div><div class="k">Victoires (${winRate} %)</div></div>
+        <div class="stat"><div class="v">${stats.bestScore.toLocaleString('fr-FR')}</div><div class="k">Meilleur score</div></div>
+        <div class="stat"><div class="v">${stats.successRate} %</div><div class="k">Taux de réussite (manches)</div></div>
+        <div class="stat"><div class="v">${BT.fmtMs(stats.bestTimeMs)}</div><div class="k">Réponse la plus rapide</div></div>
+        <div class="stat"><div class="v">${stats.bestStreak}</div><div class="k">Meilleure série</div></div>
+        <div class="stat"><div class="v">${stats.titlesFound} / ${stats.artistsFound}</div><div class="k">Titres / artistes trouvés</div></div>
+      </div>
+      <div class="card">
+        <h2>Historique</h2>
+        <div class="table-wrap">
+          <table class="tbl">
+            <thead><tr><th>Date</th><th>Salle</th><th class="num">Rang</th><th class="num">Score</th><th class="num hide-mobile">Manches</th></tr></thead>
+            <tbody>${history.length ? history.map((h) => `<tr>
+              <td>${BT.fmtDate(h.endedAt)}</td><td><span class="badge">${esc(h.roomCode)}</span></td>
+              <td class="num rank-${h.rank}">${h.rank} / ${h.players}</td>
+              <td class="num"><b>${h.score}</b></td><td class="num hide-mobile">${h.rounds}</td></tr>`).join('')
+              : '<tr><td colspan="5" class="empty">Aucune partie terminée pour le moment.</td></tr>'}</tbody>
+          </table>
+        </div>
+      </div>`;
+  })();
+  </script>
+</body>
+</html>
